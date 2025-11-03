@@ -1,0 +1,123 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-3">Lista de Ocorrências</h1>
+
+    <!-- Botão Nova Ocorrência -->
+    <a href="{% url 'criar' %}" class="btn btn-primary mb-3">Nova Ocorrência</a>
+
+    <!-- Tabela de ocorrências -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Data</th>
+                <th>Local</th>
+                <th>Policial Responsável</th>
+                <th>Vítimas</th>
+                <th>Suspeitos</th>
+                <th>Evidências</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ocorrencia in ocorrencias %}
+            <tr>
+                <td>{{ ocorrencia.id }}</td>
+                <td>{{ ocorrencia.tipo }}</td>
+                <td>{{ ocorrencia.descricao }}</td>
+                <td>{{ ocorrencia.data }}</td>
+                <td>{{ ocorrencia.local }}</td>
+                <td>{{ ocorrencia.policial_responsavel }}</td>
+                <!-- Vítimas -->
+                <td>
+                    <ul>
+                        {% for vitima in ocorrencia.vitimas.all %}
+                            <li>{{ vitima.nome }} ({{ vitima.idade }} anos)</li>
+                        {% empty %}
+                            <li>Nenhuma vítima cadastrada</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <!-- Suspeitos -->
+                <td>
+                    <ul>
+                        {% for suspeito in ocorrencia.suspeitos.all %}
+                            <li>{{ suspeito.nome }} - {{ suspeito.status }}</li>
+                        {% empty %}
+                            <li>Nenhum suspeito</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <!-- Evidências -->
+                <td>
+                    <ul>
+                        {% for evidencia in ocorrencia.evidencias.all %}
+                            <li>
+                                {{ evidencia.descricao }}
+                                {% if evidencia.imagem %}
+                                    <br><img src="{{ evidencia.imagem.url }}" alt="Evidência" width="100">
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li>Nenhuma evidência</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <!-- Ações -->
+                <td>
+                    <a href="{% url 'ocorrencia_editar' ocorrencia.id %}" class="btn btn-sm btn-warning mb-1">Editar</a>
+                    <a href="{% url 'ocorrencia_excluir' ocorrencia.id %}" class="btn btn-sm btn-danger mb-1">Excluir</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center">Nenhuma ocorrência cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginação -->
+    {% if ocorrencias.has_other_pages %}
+    <nav aria-label="Navegação de páginas">
+        <ul class="pagination justify-content-center">
+            {% if ocorrencias.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ ocorrencias.previous_page_number }}">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li>
+            {% endif %}
+
+            {% for num in ocorrencias.paginator.page_range %}
+                {% if ocorrencias.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if ocorrencias.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ ocorrencias.next_page_number }}">Próximo</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Próximo</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

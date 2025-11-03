@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Lista de Suspeitos</h2>
+<a href="{% url 'criar_suspeito' %}" class="btn btn-primary mb-3">Novo Suspeito</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr><th>Nome</th><th>Idade</th><th>Status</th><th>Ocorrência</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for s in suspeitos %}
+      <tr>
+        <td>{{ s.nome }}</td>
+        <td>{{ s.idade }}</td>
+        <td>{{ s.status }}</td>
+        <td>{{ s.ocorrencia.tipo }}</td>
+        <td>
+          <a href="{% url 'editar_suspeito' s.id %}" class="btn btn-sm btn-warning">Editar</a>
+          <a href="{% url 'excluir_suspeito' s.id %}" class="btn btn-sm btn-danger">Excluir</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Nenhum suspeito registrado.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

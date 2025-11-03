@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Lista de Policiais</h2>
+<a href="{% url 'criar_policial' %}" class="btn btn-primary mb-3">Novo Policial</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr><th>Nome</th><th>Patente</th><th>Email</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for p in policiais %}
+      <tr>
+        <td>{{ p.nome }}</td>
+        <td>{{ p.patente }}</td>
+        <td>{{ p.email }}</td>
+        <td>
+          <a href="{% url 'editar_policial' p.id %}" class="btn btn-sm btn-warning">Editar</a>
+          <a href="{% url 'excluir_policial' p.id %}" class="btn btn-sm btn-danger">Excluir</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">Nenhum policial cadastrado.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<nav>
+  <ul class="pagination">
+    {% if policiais.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ policiais.previous_page_number }}">Anterior</a></li>
+    {% endif %}
+    <li class="page-item disabled"><a class="page-link">{{ policiais.number }}</a></li>
+    {% if policiais.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ policiais.next_page_number }}">Próxima</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
